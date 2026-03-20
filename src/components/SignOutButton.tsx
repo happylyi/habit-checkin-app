@@ -18,9 +18,9 @@ export function SignOutButton() {
       type="button"
       onClick={onSignOut}
       className="rounded-xl bg-zinc-900 px-3 py-2 text-sm text-white"
+      data-oid="wjvs3hb"
     >
       退出登录
     </button>
   );
 }
-

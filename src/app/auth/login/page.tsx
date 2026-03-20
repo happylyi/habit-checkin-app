@@ -35,13 +35,24 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-[100dvh] bg-zinc-50">
-      <div className="mx-auto max-w-md p-4">
-        <h1 className="py-10 text-center text-2xl font-semibold">登录</h1>
+    <main className="min-h-[100dvh] bg-zinc-50" data-oid="k4in8-4">
+      <div className="mx-auto max-w-md p-4" data-oid="fnxz11c">
+        <h1
+          className="py-10 text-center text-2xl font-semibold"
+          data-oid="v1q80yg"
+        >
+          登录
+        </h1>
 
-        <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm">
-          <label className="flex flex-col gap-1">
-            <span className="text-sm text-zinc-600">邮箱</span>
+        <form
+          onSubmit={onSubmit}
+          className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm"
+          data-oid="1vs9p6j"
+        >
+          <label className="flex flex-col gap-1" data-oid="yfyonmi">
+            <span className="text-sm text-zinc-600" data-oid="o2vn5e5">
+              邮箱
+            </span>
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -49,11 +60,14 @@ export default function LoginPage() {
               autoComplete="email"
               required
               className="h-11 rounded-xl border border-zinc-200 bg-white px-3 outline-none focus:border-zinc-300"
+              data-oid="tnhugr4"
             />
           </label>
 
-          <label className="flex flex-col gap-1">
-            <span className="text-sm text-zinc-600">密码</span>
+          <label className="flex flex-col gap-1" data-oid="0m6jtcf">
+            <span className="text-sm text-zinc-600" data-oid="6ogu25a">
+              密码
+            </span>
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -61,21 +75,37 @@ export default function LoginPage() {
               autoComplete="current-password"
               required
               className="h-11 rounded-xl border border-zinc-200 bg-white px-3 outline-none focus:border-zinc-300"
+              data-oid="j667t3b"
             />
           </label>
 
-          {errorText ? <div className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{errorText}</div> : null}
+          {errorText ? (
+            <div
+              className="rounded-xl bg-red-50 p-3 text-sm text-red-700"
+              data-oid="6n8sjmz"
+            >
+              {errorText}
+            </div>
+          ) : null}
 
           <button
             disabled={loading}
             className="mt-2 h-11 rounded-xl bg-zinc-900 text-white disabled:opacity-60"
+            data-oid="n_6l8h5"
           >
             {loading ? "登录中..." : "登录"}
           </button>
 
-          <div className="py-2 text-center text-sm text-zinc-600">
+          <div
+            className="py-2 text-center text-sm text-zinc-600"
+            data-oid="izgmbo1"
+          >
             还没有账号？{" "}
-            <a className="font-medium text-zinc-900" href="/auth/register">
+            <a
+              className="font-medium text-zinc-900"
+              href="/auth/register"
+              data-oid="_ocf.11"
+            >
               去注册
             </a>
           </div>
@@ -84,4 +114,3 @@ export default function LoginPage() {
     </main>
   );
 }
-

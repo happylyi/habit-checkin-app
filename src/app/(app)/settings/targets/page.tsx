@@ -16,9 +16,13 @@ export default function TargetsPage() {
 
   const [userId, setUserId] = useState<string | null>(null);
   const [tasks, setTasks] = useState<TaskRow[]>([]);
-  const [targetsByTaskId, setTargetsByTaskId] = useState<Record<string, number>>({});
+  const [targetsByTaskId, setTargetsByTaskId] = useState<
+    Record<string, number>
+  >({});
 
-  const [draftTargetsByTaskId, setDraftTargetsByTaskId] = useState<Record<string, number>>({});
+  const [draftTargetsByTaskId, setDraftTargetsByTaskId] = useState<
+    Record<string, number>
+  >({});
 
   const targetMin = 0;
   const targetMax = 999;
@@ -32,8 +36,14 @@ export default function TargetsPage() {
       setUserId(userData.user?.id ?? null);
 
       const [tasksRes, targetsRes] = await Promise.all([
-        supabase.from("tasks").select("id,name,enabled").eq("enabled", true).order("created_at", { ascending: true }),
-        supabase.from("task_daily_targets").select("task_id,daily_target_count"),
+        supabase
+          .from("tasks")
+          .select("id,name,enabled")
+          .eq("enabled", true)
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("task_daily_targets")
+          .select("task_id,daily_target_count"),
       ]);
 
       if (tasksRes.error) throw tasksRes.error;
@@ -90,7 +100,7 @@ export default function TargetsPage() {
           task_id: taskId,
           daily_target_count: clamped,
         },
-        { onConflict: "user_id,task_id" }
+        { onConflict: "user_id,task_id" },
       );
 
       if (error) throw error;
@@ -103,40 +113,81 @@ export default function TargetsPage() {
   }
 
   return (
-    <section className="pb-24">
-      <div className="rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-semibold">目标设置（任务每日目标）</h2>
-        <p className="mt-1 text-sm text-zinc-600">
-          “任务每日目标达成 streak” 的判定：当某天 <span className="font-mono">done_count &gt;= daily_target_count</span> 时算达标。你可以把{" "}
-          <span className="font-mono">daily_target_count=0</span> 视为当天自动达标。
+    <section className="pb-24" data-oid="uk25i48">
+      <div className="rounded-2xl bg-white p-4 shadow-sm" data-oid="sj.b9-2">
+        <h2 className="text-lg font-semibold" data-oid="_simm8t">
+          目标设置（任务每日目标）
+        </h2>
+        <p className="mt-1 text-sm text-zinc-600" data-oid="xjll--o">
+          “任务每日目标达成 streak” 的判定：当某天{" "}
+          <span className="font-mono" data-oid="-1hvq1f">
+            done_count &gt;= daily_target_count
+          </span>{" "}
+          时算达标。你可以把{" "}
+          <span className="font-mono" data-oid="--mx6fa">
+            daily_target_count=0
+          </span>{" "}
+          视为当天自动达标。
         </p>
         {targetCountSummary ? (
-          <div className="mt-2 text-xs text-zinc-500">当前任务目标平均值：{targetCountSummary.avg}</div>
+          <div className="mt-2 text-xs text-zinc-500" data-oid="l2p8knd">
+            当前任务目标平均值：{targetCountSummary.avg}
+          </div>
         ) : null}
       </div>
 
-      <div className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
-        {loading && !hasTasks ? <div className="text-center text-xs text-zinc-500">加载中...</div> : null}
+      <div
+        className="mt-3 rounded-2xl bg-white p-4 shadow-sm"
+        data-oid="p:2vp6d"
+      >
+        {loading && !hasTasks ? (
+          <div className="text-center text-xs text-zinc-500" data-oid="6.tz.js">
+            加载中...
+          </div>
+        ) : null}
         {!hasTasks && !loading ? (
-          <div className="text-center text-sm text-zinc-600">暂无任务。先在“今日打卡”页面添加任务。</div>
+          <div className="text-center text-sm text-zinc-600" data-oid="c4vu0rk">
+            暂无任务。先在“今日打卡”页面添加任务。
+          </div>
         ) : null}
 
-        {errorText ? <div className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{errorText}</div> : null}
+        {errorText ? (
+          <div
+            className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700"
+            data-oid="9ncx08e"
+          >
+            {errorText}
+          </div>
+        ) : null}
 
         {tasks.length > 0 ? (
-          <div className="mt-3 flex flex-col gap-3">
+          <div className="mt-3 flex flex-col gap-3" data-oid="0740gqo">
             {tasks.map((t) => {
-              const value = draftTargetsByTaskId[t.id] ?? targetsByTaskId[t.id] ?? 1;
+              const value =
+                draftTargetsByTaskId[t.id] ?? targetsByTaskId[t.id] ?? 1;
               return (
-                <div key={t.id} className="rounded-2xl border border-zinc-200 p-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="text-sm font-semibold">{t.name}</div>
-                      <div className="mt-1 text-xs text-zinc-500">
-                        当前目标：{targetsByTaskId[t.id] ?? 1}（保存后用于“每日目标达成”口径）
+                <div
+                  key={t.id}
+                  className="rounded-2xl border border-zinc-200 p-3"
+                  data-oid="qjyft_c"
+                >
+                  <div
+                    className="flex items-start justify-between gap-3"
+                    data-oid="rc42irx"
+                  >
+                    <div data-oid="lmied7y">
+                      <div className="text-sm font-semibold" data-oid="-chs4v7">
+                        {t.name}
+                      </div>
+                      <div
+                        className="mt-1 text-xs text-zinc-500"
+                        data-oid="0xsw.jv"
+                      >
+                        当前目标：{targetsByTaskId[t.id] ?? 1}
+                        （保存后用于“每日目标达成”口径）
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2" data-oid="cqifve_">
                       <input
                         type="number"
                         min={targetMin}
@@ -144,15 +195,21 @@ export default function TargetsPage() {
                         step={1}
                         value={value}
                         onChange={(e) =>
-                          setDraftTargetsByTaskId((prev) => ({ ...prev, [t.id]: Number(e.target.value) }))
+                          setDraftTargetsByTaskId((prev) => ({
+                            ...prev,
+                            [t.id]: Number(e.target.value),
+                          }))
                         }
                         className="h-10 w-24 rounded-xl border border-zinc-200 bg-white px-2 text-sm outline-none"
+                        data-oid="-nn:1mf"
                       />
+
                       <button
                         type="button"
                         onClick={() => saveOne(t.id)}
                         disabled={loading}
                         className="h-10 rounded-xl bg-zinc-900 px-3 text-sm text-white disabled:opacity-60"
+                        data-oid="k:jvp7k"
                       >
                         保存
                       </button>
@@ -167,5 +224,3 @@ export default function TargetsPage() {
     </section>
   );
 }
-
-

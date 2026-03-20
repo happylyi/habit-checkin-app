@@ -5,12 +5,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { BarChart } from "@/components/BarChart";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { getZhErrorMessage } from "@/lib/errors";
+import { addDays, monthKey as getMonthKey, toDateKey } from "@/lib/date";
 import {
-  addDays,
-  monthKey as getMonthKey,
-  toDateKey,
-} from "@/lib/date";
-import { computeLastNDays, computeMonthCompletionRate, computeStreak } from "@/lib/streak";
+  computeLastNDays,
+  computeMonthCompletionRate,
+  computeStreak,
+} from "@/lib/streak";
 
 type Mode = "habit" | "task";
 type TaskRule = "single" | "dailyTarget";
@@ -36,7 +36,9 @@ export default function StatsPage() {
   const [selectedTaskId, setSelectedTaskId] = useState<string>("");
 
   const [habitDoneSet, setHabitDoneSet] = useState<Set<string>>(new Set());
-  const [taskCheckinsByDate, setTaskCheckinsByDate] = useState<Record<string, TaskCheckinRow>>({});
+  const [taskCheckinsByDate, setTaskCheckinsByDate] = useState<
+    Record<string, TaskCheckinRow>
+  >({});
   const [taskDailyTargetCount, setTaskDailyTargetCount] = useState<number>(1);
 
   const [loading, setLoading] = useState(true);
@@ -49,8 +51,14 @@ export default function StatsPage() {
     setLoading(true);
     try {
       const [habitsRes, tasksRes] = await Promise.all([
-        supabase.from("habits").select("id,name").order("created_at", { ascending: true }),
-        supabase.from("tasks").select("id,name,enabled").order("created_at", { ascending: true }),
+        supabase
+          .from("habits")
+          .select("id,name")
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("tasks")
+          .select("id,name,enabled")
+          .order("created_at", { ascending: true }),
       ]);
 
       if (habitsRes.error) throw habitsRes.error;
@@ -62,8 +70,10 @@ export default function StatsPage() {
       setHabits(habitsRows);
       setTasks(tasksRows.filter((t) => t.enabled));
 
-      if (!selectedHabitId && habitsRows.length > 0) setSelectedHabitId(habitsRows[0].id);
-      if (!selectedTaskId && tasksRows.length > 0) setSelectedTaskId(tasksRows[0].id);
+      if (!selectedHabitId && habitsRows.length > 0)
+        setSelectedHabitId(habitsRows[0].id);
+      if (!selectedTaskId && tasksRows.length > 0)
+        setSelectedTaskId(tasksRows[0].id);
     } catch (err) {
       setErrorText(getZhErrorMessage(err));
     } finally {
@@ -109,7 +119,9 @@ export default function StatsPage() {
         .eq("task_id", selectedTaskId)
         .maybeSingle();
       if (targetRes.error) throw targetRes.error;
-      setTaskDailyTargetCount((targetRes.data?.daily_target_count ?? 1) as number);
+      setTaskDailyTargetCount(
+        (targetRes.data?.daily_target_count ?? 1) as number,
+      );
 
       const { data, error } = await supabase
         .from("task_checkins")
@@ -138,7 +150,15 @@ export default function StatsPage() {
   useEffect(() => {
     refreshStreakData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, selectedHabitId, selectedTaskId, rangeStartKey, todayKey, taskRule, thisMonthKey]);
+  }, [
+    mode,
+    selectedHabitId,
+    selectedTaskId,
+    rangeStartKey,
+    todayKey,
+    taskRule,
+    thisMonthKey,
+  ]);
 
   const isComplete = useCallback(
     (dateKey: string) => {
@@ -148,10 +168,13 @@ export default function StatsPage() {
       if (taskRule === "single") return row.done_count > 0;
       return row.done_count >= taskDailyTargetCount;
     },
-    [mode, habitDoneSet, taskCheckinsByDate, taskRule, taskDailyTargetCount]
+    [mode, habitDoneSet, taskCheckinsByDate, taskRule, taskDailyTargetCount],
   );
 
-  const currentStreak = useMemo(() => computeStreak(todayKey, isComplete), [todayKey, isComplete]);
+  const currentStreak = useMemo(
+    () => computeStreak(todayKey, isComplete),
+    [todayKey, isComplete],
+  );
 
   const monthCompletion = useMemo(
     () =>
@@ -159,10 +182,13 @@ export default function StatsPage() {
         monthKey: thisMonthKey,
         isComplete,
       }),
-    [thisMonthKey, isComplete]
+    [thisMonthKey, isComplete],
   );
 
-  const last14Keys = useMemo(() => computeLastNDays({ endDateKey: todayKey, n: 14 }), [todayKey]);
+  const last14Keys = useMemo(
+    () => computeLastNDays({ endDateKey: todayKey, n: 14 }),
+    [todayKey],
+  );
 
   const chartData = useMemo(() => {
     return last14Keys.map((dk) => {
@@ -175,7 +201,7 @@ export default function StatsPage() {
             ? isComplete(dk)
               ? 1
               : 0
-            : taskCheckinsByDate[dk]?.done_count ?? 0;
+            : (taskCheckinsByDate[dk]?.done_count ?? 0);
 
       const label = dk.slice(5);
       const tooltip =
@@ -190,23 +216,41 @@ export default function StatsPage() {
   }, [last14Keys, mode, taskRule, isComplete, taskCheckinsByDate]);
 
   return (
-    <section className="pb-24">
-      <div className="rounded-2xl bg-white p-4 shadow-sm">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold">统计与连续天数</h2>
-            <p className="mt-1 text-sm text-zinc-600">口径：习惯按“单项完成”；任务支持“单项”或“每日目标”。</p>
+    <section className="pb-24" data-oid="jhwybj6">
+      <div className="rounded-2xl bg-white p-4 shadow-sm" data-oid="feuxrkz">
+        <div
+          className="flex items-start justify-between gap-4"
+          data-oid="a-t.5y8"
+        >
+          <div data-oid="-751k17">
+            <h2 className="text-lg font-semibold" data-oid="8to74sl">
+              统计与连续天数
+            </h2>
+            <p className="mt-1 text-sm text-zinc-600" data-oid="dhhdcu1">
+              口径：习惯按“单项完成”；任务支持“单项”或“每日目标”。
+            </p>
           </div>
-          <span className="rounded-xl bg-zinc-100 px-3 py-1 text-xs text-zinc-700">{mode === "habit" ? "习惯统计" : "任务统计"}</span>
+          <span
+            className="rounded-xl bg-zinc-100 px-3 py-1 text-xs text-zinc-700"
+            data-oid="cqpzewu"
+          >
+            {mode === "habit" ? "习惯统计" : "任务统计"}
+          </span>
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div
+          className="mt-3 flex flex-wrap items-center gap-2"
+          data-oid="avfliw6"
+        >
           <button
             type="button"
             onClick={() => setMode("habit")}
             className={`rounded-xl px-3 py-2 text-sm ${
-              mode === "habit" ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-800"
+              mode === "habit"
+                ? "bg-zinc-900 text-white"
+                : "bg-zinc-100 text-zinc-800"
             }`}
+            data-oid="3gg2k7u"
           >
             习惯
           </button>
@@ -214,8 +258,11 @@ export default function StatsPage() {
             type="button"
             onClick={() => setMode("task")}
             className={`rounded-xl px-3 py-2 text-sm ${
-              mode === "task" ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-800"
+              mode === "task"
+                ? "bg-zinc-900 text-white"
+                : "bg-zinc-100 text-zinc-800"
             }`}
+            data-oid="hr_om.y"
           >
             任务
           </button>
@@ -226,8 +273,11 @@ export default function StatsPage() {
                 type="button"
                 onClick={() => setTaskRule("single")}
                 className={`rounded-xl px-3 py-2 text-sm ${
-                  taskRule === "single" ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-800"
+                  taskRule === "single"
+                    ? "bg-zinc-900 text-white"
+                    : "bg-zinc-100 text-zinc-800"
                 }`}
+                data-oid="a.b3iwr"
               >
                 单项达成
               </button>
@@ -235,8 +285,11 @@ export default function StatsPage() {
                 type="button"
                 onClick={() => setTaskRule("dailyTarget")}
                 className={`rounded-xl px-3 py-2 text-sm ${
-                  taskRule === "dailyTarget" ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-800"
+                  taskRule === "dailyTarget"
+                    ? "bg-zinc-900 text-white"
+                    : "bg-zinc-100 text-zinc-800"
                 }`}
+                data-oid="l2yyeh4"
               >
                 每日目标达成
               </button>
@@ -244,32 +297,34 @@ export default function StatsPage() {
           ) : null}
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="mt-3 grid grid-cols-2 gap-2" data-oid="n:hecf6">
           {mode === "habit" ? (
-            <label className="text-sm text-zinc-600">
+            <label className="text-sm text-zinc-600" data-oid="lde_1cz">
               选择习惯
               <select
                 value={selectedHabitId}
                 onChange={(e) => setSelectedHabitId(e.target.value)}
                 className="mt-1 h-10 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm outline-none"
+                data-oid="q5z5t85"
               >
                 {habits.map((h) => (
-                  <option key={h.id} value={h.id}>
+                  <option key={h.id} value={h.id} data-oid="iu_f56r">
                     {h.name}
                   </option>
                 ))}
               </select>
             </label>
           ) : (
-            <label className="text-sm text-zinc-600">
+            <label className="text-sm text-zinc-600" data-oid="pcyk96u">
               选择任务
               <select
                 value={selectedTaskId}
                 onChange={(e) => setSelectedTaskId(e.target.value)}
                 className="mt-1 h-10 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm outline-none"
+                data-oid="otut9p9"
               >
                 {tasks.map((t) => (
-                  <option key={t.id} value={t.id}>
+                  <option key={t.id} value={t.id} data-oid="_wy88g6">
                     {t.name}
                   </option>
                 ))}
@@ -277,7 +332,10 @@ export default function StatsPage() {
             </label>
           )}
 
-          <div className="rounded-xl bg-zinc-50 p-3 text-xs text-zinc-600">
+          <div
+            className="rounded-xl bg-zinc-50 p-3 text-xs text-zinc-600"
+            data-oid="ga10isp"
+          >
             {mode === "task" && taskRule === "dailyTarget" ? (
               <>每日目标：至少 {taskDailyTargetCount} 次</>
             ) : (
@@ -286,44 +344,86 @@ export default function StatsPage() {
           </div>
         </div>
 
-        {errorText ? <div className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{errorText}</div> : null}
+        {errorText ? (
+          <div
+            className="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700"
+            data-oid="6xmcqvl"
+          >
+            {errorText}
+          </div>
+        ) : null}
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <div className="text-sm font-semibold">当前连续</div>
-          <div className="mt-2 text-3xl font-semibold text-zinc-900">{currentStreak} 天</div>
-          <div className="mt-1 text-xs text-zinc-500">按当前统计口径计算</div>
+      <div className="mt-3 grid grid-cols-2 gap-3" data-oid="6mlk2-t">
+        <div className="rounded-2xl bg-white p-4 shadow-sm" data-oid="loh5rvc">
+          <div className="text-sm font-semibold" data-oid="jd2.xo.">
+            当前连续
+          </div>
+          <div
+            className="mt-2 text-3xl font-semibold text-zinc-900"
+            data-oid="yhf5-zs"
+          >
+            {currentStreak} 天
+          </div>
+          <div className="mt-1 text-xs text-zinc-500" data-oid=":oakmfw">
+            按当前统计口径计算
+          </div>
         </div>
 
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <div className="text-sm font-semibold">本月完成率</div>
-          <div className="mt-2 text-3xl font-semibold text-zinc-900">
+        <div className="rounded-2xl bg-white p-4 shadow-sm" data-oid="rbty1ai">
+          <div className="text-sm font-semibold" data-oid="p7fahro">
+            本月完成率
+          </div>
+          <div
+            className="mt-2 text-3xl font-semibold text-zinc-900"
+            data-oid="g98zij2"
+          >
             {Math.round(monthCompletion.rate * 100)}%
           </div>
-          <div className="mt-1 text-xs text-zinc-500">
+          <div className="mt-1 text-xs text-zinc-500" data-oid="d.o235g">
             {monthCompletion.completedDays}/{monthCompletion.totalDays} 天
           </div>
         </div>
       </div>
 
-      <div className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <div className="text-sm font-semibold">最近 14 天</div>
-            <div className="mt-1 text-xs text-zinc-500">用柱状图展示完成/达成状态</div>
+      <div
+        className="mt-3 rounded-2xl bg-white p-4 shadow-sm"
+        data-oid="0u6fcf1"
+      >
+        <div
+          className="flex items-center justify-between gap-3"
+          data-oid="m5o7aeq"
+        >
+          <div data-oid="5r2peiz">
+            <div className="text-sm font-semibold" data-oid="e-bwxx-">
+              最近 14 天
+            </div>
+            <div className="mt-1 text-xs text-zinc-500" data-oid="2dael_s">
+              用柱状图展示完成/达成状态
+            </div>
           </div>
-          <div className="text-xs text-zinc-500">{mode === "task" ? (taskRule === "dailyTarget" ? "达标(0/1)" : "完成次数") : "完成(0/1)"}</div>
+          <div className="text-xs text-zinc-500" data-oid="has1tzx">
+            {mode === "task"
+              ? taskRule === "dailyTarget"
+                ? "达标(0/1)"
+                : "完成次数"
+              : "完成(0/1)"}
+          </div>
         </div>
 
-        <div className="mt-2 rounded-2xl bg-zinc-50 p-2">
-          <BarChart data={chartData} height={140} />
+        <div className="mt-2 rounded-2xl bg-zinc-50 p-2" data-oid="qmiwwxc">
+          <BarChart data={chartData} height={140} data-oid="g8vjie_" />
         </div>
       </div>
 
-      {loading ? <div className="mt-3 text-center text-xs text-zinc-500">加载中...</div> : null}
+      {loading ? (
+        <div
+          className="mt-3 text-center text-xs text-zinc-500"
+          data-oid="n0yj28o"
+        >
+          加载中...
+        </div>
+      ) : null}
     </section>
   );
 }
-
-
